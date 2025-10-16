@@ -28,6 +28,9 @@ export class ProveedorController {
     create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const proveedor = await this.service.create(req.body);
+            if (!proveedor || !proveedor.proveedorId) {
+                throw new HttpError(500, 'No se pudo crear el proveedor');
+            }
             res.status(201).json(proveedor);
         } catch (error) {
             next(error);

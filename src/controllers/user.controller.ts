@@ -27,6 +27,9 @@ export class UserController {
     create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const user = await this.service.create(req.body);
+            if (!user || !user.usuarioId) {
+                throw new HttpError(500, 'No se pudo crear el usuario');
+            }
             res.status(201).json(user);
         } catch (error) {
             next(error);

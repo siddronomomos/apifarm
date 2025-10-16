@@ -38,6 +38,9 @@ export class ClienteController {
     create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const cliente = await this.service.create(req.body);
+            if (!cliente || !cliente.clienteId) {
+                throw new HttpError(500, 'No se pudo crear el cliente');
+            }
             res.status(201).json(cliente);
         } catch (error) {
             next(error);

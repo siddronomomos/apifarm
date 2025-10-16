@@ -46,6 +46,9 @@ export class ArticuloController {
     create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const articulo = await this.service.create(req.body);
+            if (!articulo || !articulo.codigo) {
+                throw new HttpError(500, 'No se pudo crear el artículo');
+            }
             res.status(201).json(articulo);
         } catch (error) {
             next(error);
