@@ -2,10 +2,8 @@ import { Router } from 'express';
 import { authRoutes } from './auth.routes';
 import { userRoutes } from './users.routes';
 import { clienteRoutes } from './clientes.routes';
-import { vehiculoRoutes } from './vehiculos.routes';
-import { piezaRoutes } from './piezas.routes';
-import { reparacionRoutes } from './reparaciones.routes';
-import { detalleRoutes } from './detalles.routes';
+import { articuloRoutes } from './articulos.routes';
+import { proveedorRoutes } from './proveedores.routes';
 
 export const registerRoutes = (): Router => {
     const router = Router();
@@ -13,10 +11,8 @@ export const registerRoutes = (): Router => {
     router.use('/auth', authRoutes());
     router.use('/users', userRoutes());
     router.use('/clientes', clienteRoutes());
-    router.use('/vehiculos', vehiculoRoutes());
-    router.use('/piezas', piezaRoutes());
-    router.use('/reparaciones', reparacionRoutes());
-    router.use('/detalles', detalleRoutes());
+    router.use('/articulos', articuloRoutes());
+    router.use('/proveedores', proveedorRoutes());
 
     return router;
 };
