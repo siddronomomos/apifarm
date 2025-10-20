@@ -164,11 +164,11 @@ export class ArticuloRepository {
             `SELECT codigo, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
                     activo, fecha_registro as fechaRegistro
              FROM Articulos
-             WHERE descripcion LIKE ?
+             WHERE (descripcion LIKE ? OR codigo LIKE ?)
              ${where}
              ORDER BY descripcion
              LIMIT 50`,
-            [`%${term}%`]
+            [`%${term}%`, `%${term}%`]
         );
         return rows as Articulo[];
     }

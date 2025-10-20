@@ -4,6 +4,7 @@ import { userRoutes } from './users.routes';
 import { clienteRoutes } from './clientes.routes';
 import { articuloRoutes } from './articulos.routes';
 import { proveedorRoutes } from './proveedores.routes';
+import { almacenRoutes } from './almacen.routes';
 
 export const registerRoutes = (): Router => {
     const router = Router();
@@ -13,6 +14,7 @@ export const registerRoutes = (): Router => {
     router.use('/clientes', clienteRoutes());
     router.use('/articulos', articuloRoutes());
     router.use('/proveedores', proveedorRoutes());
+    router.use('/almacen', almacenRoutes());
 
     return router;
 };
