@@ -1,6 +1,7 @@
 export interface Articulo {
     codigo: string;
-    descripcion: string;
+    nombre: string;
+    descripcion?: string;
     precio: number;
     costo: number;
     categoria?: string;
@@ -11,7 +12,8 @@ export interface Articulo {
 
 export interface CreateArticuloDTO {
     codigo: string;
-    descripcion: string;
+    nombre: string;
+    descripcion?: string;
     precio: number;
     costo?: number;
     categoria?: string;
@@ -19,6 +21,7 @@ export interface CreateArticuloDTO {
 }
 
 export interface UpdateArticuloDTO {
+    nombre?: string;
     descripcion?: string;
     precio?: number;
     costo?: number;

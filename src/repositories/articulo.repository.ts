@@ -6,11 +6,11 @@ export class ArticuloRepository {
     async findAll(includeInactivos = false): Promise<Articulo[]> {
         const where = includeInactivos ? '' : 'WHERE activo = TRUE';
         const [rows] = await pool.execute<RowDataPacket[]>(
-            `SELECT codigo, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
+            `SELECT codigo, nombre, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
                     activo, fecha_registro as fechaRegistro
              FROM Articulos
              ${where}
-             ORDER BY descripcion`
+             ORDER BY nombre`
         );
         return rows as Articulo[];
     }
@@ -18,7 +18,7 @@ export class ArticuloRepository {
     async findAllWithInventory(includeInactivos = false): Promise<ArticuloConInventario[]> {
         const where = includeInactivos ? '' : 'WHERE a.activo = TRUE';
         const [rows] = await pool.execute<RowDataPacket[]>(
-            `SELECT a.codigo, a.descripcion, a.precio, a.costo, a.categoria, 
+            `SELECT a.codigo, a.nombre, a.descripcion, a.precio, a.costo, a.categoria, 
                     a.unidad_medida as unidadMedida, a.activo, a.fecha_registro as fechaRegistro,
                     alm.cantidad, alm.stock_minimo as stockMinimo, alm.stock_maximo as stockMaximo,
                     CASE 
@@ -29,14 +29,14 @@ export class ArticuloRepository {
              FROM Articulos a
              LEFT JOIN Almacen alm ON a.codigo = alm.codigo_articulo
              ${where}
-             ORDER BY a.descripcion`
+             ORDER BY a.nombre`
         );
         return rows as ArticuloConInventario[];
     }
 
     async findByCodigo(codigo: string): Promise<Articulo | null> {
         const [rows] = await pool.execute<RowDataPacket[]>(
-            `SELECT codigo, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
+            `SELECT codigo, nombre, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
                     activo, fecha_registro as fechaRegistro
              FROM Articulos
              WHERE codigo = ?`,
@@ -52,7 +52,7 @@ export class ArticuloRepository {
 
     async findByCodigoWithInventory(codigo: string): Promise<ArticuloConInventario | null> {
         const [rows] = await pool.execute<RowDataPacket[]>(
-            `SELECT a.codigo, a.descripcion, a.precio, a.costo, a.categoria, 
+            `SELECT a.codigo, a.nombre, a.descripcion, a.precio, a.costo, a.categoria, 
                     a.unidad_medida as unidadMedida, a.activo, a.fecha_registro as fechaRegistro,
                     alm.cantidad, alm.stock_minimo as stockMinimo, alm.stock_maximo as stockMaximo,
                     CASE 
@@ -75,11 +75,12 @@ export class ArticuloRepository {
 
     async create(data: CreateArticuloDTO): Promise<string> {
         const [result] = await pool.execute<ResultSetHeader>(
-            `INSERT INTO Articulos (codigo, descripcion, precio, costo, categoria, unidad_medida)
-             VALUES (?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO Articulos (codigo, nombre, descripcion, precio, costo, categoria, unidad_medida)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [
                 data.codigo,
-                data.descripcion,
+                data.nombre,
+                data.descripcion || data.nombre,
                 data.precio,
                 data.costo || 0,
                 data.categoria || null,
@@ -101,6 +102,10 @@ export class ArticuloRepository {
         const fields: string[] = [];
         const values: any[] = [];
 
+        if (data.nombre !== undefined) {
+            fields.push('nombre = ?');
+            values.push(data.nombre);
+        }
         if (data.descripcion !== undefined) {
             fields.push('descripcion = ?');
             values.push(data.descripcion);
@@ -161,14 +166,14 @@ export class ArticuloRepository {
     async searchByDescripcion(term: string, includeInactivos = false): Promise<Articulo[]> {
         const where = includeInactivos ? '' : 'AND activo = TRUE';
         const [rows] = await pool.execute<RowDataPacket[]>(
-            `SELECT codigo, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
+            `SELECT codigo, nombre, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
                     activo, fecha_registro as fechaRegistro
              FROM Articulos
-             WHERE (descripcion LIKE ? OR codigo LIKE ?)
+             WHERE (nombre LIKE ? OR descripcion LIKE ? OR codigo LIKE ?)
              ${where}
-             ORDER BY descripcion
+             ORDER BY nombre
              LIMIT 50`,
-            [`%${term}%`, `%${term}%`]
+            [`%${term}%`, `%${term}%`, `%${term}%`]
         );
         return rows as Articulo[];
     }
@@ -176,12 +181,12 @@ export class ArticuloRepository {
     async findByCategoria(categoria: string, includeInactivos = false): Promise<Articulo[]> {
         const where = includeInactivos ? '' : 'AND activo = TRUE';
         const [rows] = await pool.execute<RowDataPacket[]>(
-            `SELECT codigo, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
+            `SELECT codigo, nombre, descripcion, precio, costo, categoria, unidad_medida as unidadMedida, 
                     activo, fecha_registro as fechaRegistro
              FROM Articulos
              WHERE categoria = ?
              ${where}
-             ORDER BY descripcion`,
+             ORDER BY nombre`,
             [categoria]
         );
         return rows as Articulo[];

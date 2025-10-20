@@ -41,7 +41,7 @@ export class ArticuloService {
 
     async create(payload: unknown): Promise<Articulo> {
         const data = createArticuloSchema.parse(payload);
-        cleanOptionalStrings(data, ['categoria', 'unidadMedida']);
+        cleanOptionalStrings(data, ['categoria', 'unidadMedida', 'descripcion']);
 
         const exists = await this.repo.exists(data.codigo);
         if (exists) {
@@ -51,6 +51,7 @@ export class ArticuloService {
         try {
             await this.repo.create({
                 codigo: data.codigo,
+                nombre: data.nombre,
                 descripcion: data.descripcion,
                 precio: data.precio,
                 costo: data.costo,
@@ -73,7 +74,7 @@ export class ArticuloService {
 
     async update(codigo: string, payload: unknown): Promise<Articulo> {
         const data = updateArticuloSchema.parse(payload);
-        cleanOptionalStrings(data, ['categoria', 'unidadMedida']);
+        cleanOptionalStrings(data, ['categoria', 'unidadMedida', 'descripcion']);
 
         const existing = await this.repo.findByCodigo(codigo);
         if (!existing) {
@@ -82,6 +83,7 @@ export class ArticuloService {
 
         try {
             const success = await this.repo.update(codigo, {
+                nombre: data.nombre,
                 descripcion: data.descripcion,
                 precio: data.precio,
                 costo: data.costo,

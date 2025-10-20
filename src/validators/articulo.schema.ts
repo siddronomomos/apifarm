@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 export const createArticuloSchema = z.object({
     codigo: z.string().min(1, 'El código es requerido').max(50),
-    descripcion: z.string().min(1, 'La descripción es requerida').max(255),
+    nombre: z.string().min(1, 'El nombre es requerido').max(100),
+    descripcion: z.string().max(255).optional(),
     precio: z.number().positive('El precio debe ser positivo'),
     costo: z.number().nonnegative('El costo debe ser mayor o igual a 0').optional(),
     categoria: z.string().max(100).optional(),
@@ -10,7 +11,8 @@ export const createArticuloSchema = z.object({
 });
 
 export const updateArticuloSchema = z.object({
-    descripcion: z.string().min(1).max(255).optional(),
+    nombre: z.string().min(1).max(100).optional(),
+    descripcion: z.string().max(255).optional(),
     precio: z.number().positive().optional(),
     costo: z.number().nonnegative().optional(),
     categoria: z.string().max(100).optional(),
